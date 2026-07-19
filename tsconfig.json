@@ -12,7 +12,7 @@
     "paths": {
       "@pages/*": ["e2e/pages/*"],
       "@components/*": ["e2e/components/*"],
-      "@fixtures/*": ["e2e/fixtures/*"],
+      "@setup/*": ["e2e/setup/*"],
       "@utils/*": ["e2e/utils/*"]
     }
   },
