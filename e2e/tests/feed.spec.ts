@@ -37,5 +37,4 @@ test.describe("feed", () => {
     await expect(feedPage.getPostCard(postId)).toBeVisible();
     await expect(feedPage.getPostByText(postContent)).toBeVisible();
   });
-
 });

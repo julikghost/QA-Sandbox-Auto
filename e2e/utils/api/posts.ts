@@ -3,15 +3,8 @@ import {
   type Page,
   type Response,
 } from "@playwright/test";
-import {
-  buildPostPayload,
-  type PostPayload,
-} from "../../testdata/posts";
-import {
-  getAliceAccessToken,
-  login,
-  requireAliceCredentials,
-} from "./auth";
+import { buildPostPayload, type PostPayload } from "../../testdata/posts";
+import { getAliceAccessToken, login, requireAliceCredentials } from "./auth";
 import { apiUrl } from "./client";
 
 export type CreatedPost = {

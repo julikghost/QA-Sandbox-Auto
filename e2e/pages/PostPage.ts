@@ -12,7 +12,7 @@ function toTestId(id: string): string {
 export class PostPage extends BasePage {
   readonly sidebar: Sidebar;
   readonly commentInput: Locator;
-  readonly commentSubmit: Locator;  
+  readonly commentSubmit: Locator;
   readonly repostBtn: Locator;
 
   constructor(page: Page) {
@@ -20,7 +20,7 @@ export class PostPage extends BasePage {
     this.sidebar = new Sidebar(page);
     this.commentInput = page.getByTestId("comment-input");
     this.commentSubmit = page.getByTestId("comment-submit-btn");
-    this.repostBtn = page.getByTestId("repost-btn");    
+    this.repostBtn = page.getByTestId("repost-btn");
   }
 
   async openPage(postId: string): Promise<void> {
@@ -88,9 +88,11 @@ export class PostPage extends BasePage {
 
     await expect(likesCount).toHaveText(String(likeCount + 1));
     await expect(likeBtn).toHaveClass(/text-red-500/);
-    await expect(likeBtn.locator("svg")).toHaveAttribute("fill", "currentColor");
+    await expect(likeBtn.locator("svg")).toHaveAttribute(
+      "fill",
+      "currentColor",
+    );
   }
-
 
   async likeComment(commentId: string) {
     const likeBtn = this.getCommentLikeBtn(commentId);
@@ -100,22 +102,29 @@ export class PostPage extends BasePage {
 
     await expect(likeBtn).toHaveText(String(likeCount + 1));
     await expect(likeBtn).toHaveClass(/text-red-500/);
-    await expect(likeBtn.locator("svg")).toHaveAttribute("fill", "currentColor");
+    await expect(likeBtn.locator("svg")).toHaveAttribute(
+      "fill",
+      "currentColor",
+    );
   }
 
-  
   async bookmarkPost(postId: string) {
     const bookmarkBtn = this.getPostBookmarkBtn(postId);
     await bookmarkBtn.click();
     await expect(bookmarkBtn).toHaveClass(/text-brand-600/);
-    await expect(bookmarkBtn.locator("svg")).toHaveAttribute("fill", "currentColor");
+    await expect(bookmarkBtn.locator("svg")).toHaveAttribute(
+      "fill",
+      "currentColor",
+    );
   }
 
-  async repostPost(postId: string) {
+  async repostPost(_postId: string) {
     const repostBtn = this.repostBtn;
     await repostBtn.click();
     await expect(repostBtn).toHaveClass(/text-brand-600/);
-    await expect(repostBtn.locator("svg")).toHaveAttribute("fill", "currentColor");
+    await expect(repostBtn.locator("svg")).toHaveAttribute(
+      "fill",
+      "currentColor",
+    );
   }
-
 }
