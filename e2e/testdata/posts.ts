@@ -14,6 +14,16 @@ export function buildPostPayload(
   };
 }
 
+/** unique content for post edit */
+export function buildEditedPostPayload(
+  overrides: Partial<PostPayload> = {},
+): PostPayload {
+  return {
+    content: `e2e edited post ${Date.now()}`,
+    ...overrides,
+  };
+}
+
 /** fixed cases if needed in multiple tests */
 export const postPayloads = {
   short: { content: "e2e short post" },

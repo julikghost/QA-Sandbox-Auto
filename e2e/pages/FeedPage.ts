@@ -1,13 +1,8 @@
 import { expect, type Locator, type Page } from "@playwright/test";
 import { BasePage } from "./BasePage";
 import { Sidebar } from "../components/Sidebar";
-
-/** Same shortening as frontend `tid()` for data-testid suffixes. */
-function toTestId(id: string): string {
-  if (!id.includes("-")) return id;
-  const last = id.replace(/-/g, "").slice(-12);
-  return last.replace(/^0+/, "") || "0";
-}
+import { getCreatedPostId, waitForPostCreate } from "../utils/api/posts";
+import { toTestId } from "../utils/tid";
 
 export class FeedPage extends BasePage {
   readonly sidebar: Sidebar;
@@ -57,6 +52,10 @@ export class FeedPage extends BasePage {
     return this.page.getByTestId(`post-repost-btn-${toTestId(postId)}`);
   }
 
+  getPostContent(postId: string): Locator {
+    return this.page.getByTestId(`post-content-${toTestId(postId)}`);
+  }
+
   async openPage(): Promise<void> {
     await this.open("/");
   }
@@ -69,11 +68,14 @@ export class FeedPage extends BasePage {
     await this.sidebar.expectVisible();
   }
 
-  async createPost(text: string) {
+  async createPost(text: string): Promise<string> {
+    const responsePromise = waitForPostCreate(this.page);
     await this.postComposerInput.fill(text);
     await expect(this.postComposerSubmit).toBeEnabled();
     await this.postComposerSubmit.click();
+    const postId = await getCreatedPostId(await responsePromise);
     await expect(this.getPostByText(text)).toBeVisible({ timeout: 15_000 });
+    return postId;
   }
 
   async openPost(postId: string) {
