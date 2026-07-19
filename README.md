@@ -48,7 +48,7 @@ npm run format:check     # Prettier check only
 npm run check            # lint + format:check
 ```
 
-Перед `git push` автоматически вызывается husky-hook `.husky/pre-push` → `npm run check`.  
+Перед `git commit` автоматически вызывается husky-hook `.husky/pre-commit` → `npm run check`.  
 После `npm install` хук ставится скриптом `prepare`.
 
 Окончания строк: LF (см. `.gitattributes`, Prettier `endOfLine: "lf"`).
