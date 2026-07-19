@@ -98,4 +98,8 @@ export class FeedPage extends BasePage {
     await this.getPostDeleteBtn(postId).click();
     await expect(this.getPostCard(postId)).not.toBeVisible({ timeout: 15_000 });
   }
+
+  async logout() {
+    await this.sidebar.logout();
+  }
 }

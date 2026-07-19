@@ -1,5 +1,6 @@
 import { expect, type Locator, type Page } from "@playwright/test";
 import { BasePage } from "./BasePage";
+import { AUTH_ERRORS } from "../testdata/errors";
 
 export class LoginPage extends BasePage {
   readonly emailInput: Locator;
@@ -72,4 +73,19 @@ export class LoginPage extends BasePage {
   async signup() {
     await this.signupLink.click();
   }
+
+  async invalidPassword(email: string) {
+    const password = `wrong-${crypto.randomUUID()}`;
+    await this.login(email, password);
+    await expect(this.authErrorMessage).toContainText(
+      AUTH_ERRORS.invalidCredentials,
+    );
+  }
+
+  async loginBannedUser(email: string, password: string) {
+    await this.login(email, password);
+    await this.validateErrorMessage(AUTH_ERRORS.accountDeactivated);
+  }
 }
+
+
