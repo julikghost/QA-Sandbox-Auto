@@ -2,7 +2,6 @@ import { test } from "@playwright/test";
 import { RegisterPage } from "../pages/RegisterPage";
 import { LoginPage } from "../pages/LoginPage";
 import { buildRegisterPayload } from "../testdata/users";
-import { AUTH_ERRORS } from "../testdata/errors";
 
 test.describe("register via UI", () => {
   let registerPage: RegisterPage;
@@ -23,7 +22,6 @@ test.describe("register via UI", () => {
   test("Duplicate registration shows error", async () => {
     const user = buildRegisterPayload();
     await registerPage.successfulRegistration(user);
-    await registerPage.failedRegistration(user, AUTH_ERRORS.registerDuplicate);
+    await registerPage.failedRegistration(user);
   });
-
 });

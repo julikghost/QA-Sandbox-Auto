@@ -1,6 +1,7 @@
 import { expect, type Locator, type Page } from "@playwright/test";
 import { BasePage } from "./BasePage";
 import type { RegisterPayload } from "../testdata/users";
+import { AUTH_ERRORS, type AuthError } from "../testdata/errors";
 
 export class RegisterPage extends BasePage {
   readonly displayNameInput: Locator;
@@ -44,9 +45,16 @@ export class RegisterPage extends BasePage {
     await expect(this.page).toHaveURL(/\/login/);
   }
 
-  async failedRegistration(user: RegisterPayload, message: string) {
+  async failedRegistration(
+    user: RegisterPayload,
+    message: AuthError = AUTH_ERRORS.registerDuplicate,
+  ) {
     await this.openPage();
     await this.register(user);
+    await this.expectAuthError(message);
+  }
+
+  async expectAuthError(message: AuthError) {
     await expect(this.authErrorMessage).toBeVisible();
     await expect(this.authErrorMessage).toContainText(message);
   }
