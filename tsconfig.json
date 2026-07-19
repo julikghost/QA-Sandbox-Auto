@@ -1,0 +1,20 @@
+{
+  "compilerOptions": {
+    "target": "ES2022",
+    "module": "commonjs",
+    "moduleResolution": "node",
+    "strict": true,
+    "esModuleInterop": true,
+    "skipLibCheck": true,
+    "resolveJsonModule": true,
+    "types": ["node"],
+    "baseUrl": ".",
+    "paths": {
+      "@pages/*": ["e2e/pages/*"],
+      "@components/*": ["e2e/components/*"],
+      "@fixtures/*": ["e2e/fixtures/*"],
+      "@utils/*": ["e2e/utils/*"]
+    }
+  },
+  "include": ["e2e/**/*.ts", "playwright.config.ts"]
+}
