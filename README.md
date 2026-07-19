@@ -26,7 +26,8 @@ npx playwright install chromium
 cp .env.example .env
 ```
 
-Проверь `.env`: `BASE_URL`, `API_URL`, креды seed-пользователей (alice, frank и др.).
+Проверь `.env`: `BASE_URL`, `API_URL`, креды seed-пользователей (alice, frank и др.).  
+В CI / без `.env` подхватывается `.env.example` (см. `playwright.config.ts`).
 
 ## Run
 

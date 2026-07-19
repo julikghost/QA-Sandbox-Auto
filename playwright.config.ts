@@ -2,7 +2,9 @@ import { defineConfig, devices } from "@playwright/test";
 import dotenv from "dotenv";
 import path from "path";
 
+// Local overrides first; CI / fresh clone falls back to committed .env.example
 dotenv.config({ path: path.resolve(__dirname, ".env"), quiet: true });
+dotenv.config({ path: path.resolve(__dirname, ".env.example"), quiet: true });
 
 const baseURL = process.env.BASE_URL ?? "http://localhost:3000";
 const aliceAuthFile = path.join(__dirname, "playwright/.auth/auth-alice.json");
