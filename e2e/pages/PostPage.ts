@@ -90,12 +90,11 @@ export class PostPage extends BasePage {
     await this.openPage(postId);
     await expect(this.getPostContent(postId)).toContainText(content);
   }
-  
 
   async editPostUI(postId: string, content: string) {
     await this.feedPage.openPost(postId);
     await expect(this.getPostContent(postId)).toContainText(content);
-    await  this.editButton.click();
+    await this.editButton.click();
     await this.getPostContent(postId).clear();
     await this.getPostContent(postId).fill(content);
     await this.submitButton.click();
