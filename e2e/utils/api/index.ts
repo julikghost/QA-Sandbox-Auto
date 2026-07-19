@@ -3,6 +3,7 @@ export {
   ALICE_AUTH_FILE,
   login,
   requireAliceCredentials,
+  requireFrankCredentials,
   getAliceAccessToken,
   type AuthTokens,
   type UserCredentials,

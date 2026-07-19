@@ -35,6 +35,16 @@ export function requireAliceCredentials(): UserCredentials {
   return { email, password };
 }
 
+/** Credentials from .env: FRANK_EMAIL / FRANK_PASSWORD (banned user UI login). */
+export function requireFrankCredentials(): UserCredentials {
+  const email = process.env.FRANK_EMAIL;
+  const password = process.env.FRANK_PASSWORD;
+  if (!email || !password) {
+    throw new Error("FRANK_EMAIL / FRANK_PASSWORD missing in .env");
+  }
+  return { email, password };
+}
+
 /** access_token from alice storageState (no re-login). */
 export function getAliceAccessToken(
   authFile: string = ALICE_AUTH_FILE,

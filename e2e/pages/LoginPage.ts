@@ -72,4 +72,16 @@ export class LoginPage extends BasePage {
   async signup() {
     await this.signupLink.click();
   }
+
+  async invalidPassword(email: string) {
+    const password = `wrong-${crypto.randomUUID()}`;
+    await this.login(email, password);
+   await expect(this.authErrorMessage).toContainText("Invalid email or password");
+  }
+  
+  async loginBannedUser(email: string, password: string) {
+    await this.login(email, password);
+    await this.validateErrorMessage("Account is deactivated");
+  }
 }
+
