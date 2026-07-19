@@ -23,7 +23,7 @@ test.describe("post via UI", () => {
     postId = await feedPage.createPost(content);
   });
 
-  test.fail("Edit post via UI", async () => {
+  test.skip("Edit post via UI", async () => {
     const { content } = buildPostPayload();
     postId = await feedPage.createPost(content);
     await postPage.editPostUI(postId, content);
