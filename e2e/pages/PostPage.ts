@@ -1,26 +1,34 @@
-import { expect, type Locator, type Page } from "@playwright/test";
+import {
+  expect,
+  type APIRequestContext,
+  type Locator,
+  type Page,
+} from "@playwright/test";
 import { BasePage } from "./BasePage";
+import { FeedPage } from "./FeedPage";
 import { Sidebar } from "../components/Sidebar";
-
-/** Same shortening as frontend `tid()` for data-testid suffixes. */
-function toTestId(id: string): string {
-  if (!id.includes("-")) return id;
-  const last = id.replace(/-/g, "").slice(-12);
-  return last.replace(/^0+/, "") || "0";
-}
+import { buildEditedPostPayload } from "../testdata/posts";
+import { updateAlicePost } from "../utils/api/posts";
+import { toTestId } from "../utils/tid";
 
 export class PostPage extends BasePage {
   readonly sidebar: Sidebar;
   readonly commentInput: Locator;
   readonly commentSubmit: Locator;
   readonly repostBtn: Locator;
+  readonly feedPage: FeedPage;
+  readonly editButton: Locator;
+  readonly submitButton: Locator;
 
   constructor(page: Page) {
     super(page);
+    this.feedPage = new FeedPage(page);
     this.sidebar = new Sidebar(page);
     this.commentInput = page.getByTestId("comment-input");
     this.commentSubmit = page.getByTestId("comment-submit-btn");
     this.repostBtn = page.getByTestId("repost-btn");
+    this.editButton = page.getByTestId("edit-btn");
+    this.submitButton = page.getByTestId("submit-btn");
   }
 
   async openPage(postId: string): Promise<void> {
@@ -64,11 +72,38 @@ export class PostPage extends BasePage {
     return this.page.getByTestId(`comment-reply-btn-${toTestId(commentId)}`);
   }
 
-  async addComment(text: string) {
-    await this.commentInput.fill(text);
-    await expect(this.commentSubmit).toBeEnabled();
-    await this.commentSubmit.click();
-    await expect(this.getCommentByText(text)).toBeVisible({ timeout: 15_000 });
+  getPostContent(postId: string): Locator {
+    return this.page.getByTestId(`post-content-${toTestId(postId)}`);
+  }
+
+  /** PATCH via API (no edit form in UI), open post, assert content. */
+  async editPostApi({
+    request,
+    postId,
+    content = buildEditedPostPayload().content,
+  }: {
+    request: APIRequestContext;
+    postId: string;
+    content?: string;
+  }) {
+    await updateAlicePost(request, postId, content);
+    await this.openPage(postId);
+    await expect(this.getPostContent(postId)).toContainText(content);
+  }
+  
+
+  async editPostUI(postId: string, content: string) {
+    await this.feedPage.openPost(postId);
+    await expect(this.getPostContent(postId)).toContainText(content);
+    await  this.editButton.click();
+    await this.getPostContent(postId).clear();
+    await this.getPostContent(postId).fill(content);
+    await this.submitButton.click();
+    await expect(this.getPostContent(postId)).toContainText(content);
+  }
+
+  async deletePost(postId: string) {
+    await this.feedPage.deletePost(postId);
   }
 
   async replyToComment(commentId: string, text: string) {

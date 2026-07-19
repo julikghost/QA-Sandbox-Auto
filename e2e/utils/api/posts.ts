@@ -31,6 +31,42 @@ export async function createAlicePost(
   }
 }
 
+/** PATCH /posts/{id} as alice. Uses storageState token; on 401 — re-login. */
+export async function updateAlicePost(
+  request: APIRequestContext,
+  postId: string,
+  content: string,
+): Promise<CreatedPost> {
+  let accessToken = getAliceAccessToken();
+  let response = await request.patch(`${apiUrl()}/posts/${postId}`, {
+    headers: { Authorization: `Bearer ${accessToken}` },
+    data: { content },
+  });
+
+  if (response.status() === 401) {
+    const { email, password } = requireAliceCredentials();
+    accessToken = (await login(request, email, password)).access_token;
+    response = await request.patch(`${apiUrl()}/posts/${postId}`, {
+      headers: { Authorization: `Bearer ${accessToken}` },
+      data: { content },
+    });
+  }
+
+  if (response.status() !== 200) {
+    throw new Error(
+      `Expected PATCH /posts 200, got ${response.status()} ${await response.text()}`,
+    );
+  }
+  const body = (await response.json()) as Partial<CreatedPost>;
+  if (!body.id) {
+    throw new Error("PATCH /posts response has no id");
+  }
+  return {
+    id: body.id,
+    content: body.content ?? content,
+  };
+}
+
 /** DELETE /posts/{id} as alice (best-effort cleanup). */
 export async function deleteAlicePost(
   request: APIRequestContext,

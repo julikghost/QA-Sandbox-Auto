@@ -11,6 +11,7 @@ export {
 
 export {
   createAlicePost,
+  updateAlicePost,
   deleteAlicePost,
   createPost,
   waitForPostCreate,
