@@ -4,7 +4,12 @@ import {
   type Response,
 } from "@playwright/test";
 import { buildPostPayload, type PostPayload } from "../../testdata/posts";
-import { getAliceAccessToken, login, requireAliceCredentials } from "./auth";
+import {
+  getAliceAccessToken,
+  login,
+  requireAliceCredentials,
+  requireBobCredentials,
+} from "./auth";
 import { apiUrl } from "./client";
 
 export type CreatedPost = {
@@ -84,6 +89,34 @@ export async function deleteAlicePost(
       headers: { Authorization: `Bearer ${accessToken}` },
     });
   }
+
+  if (response.status() !== 204 && response.status() !== 200) {
+    throw new Error(
+      `Expected DELETE /posts 204, got ${response.status()} ${await response.text()}`,
+    );
+  }
+}
+
+/** POST /posts as bob (login via API). */
+export async function createBobPost(
+  request: APIRequestContext,
+  overrides: Partial<PostPayload> = {},
+): Promise<CreatedPost> {
+  const { email, password } = requireBobCredentials();
+  const { access_token } = await login(request, email, password);
+  return createPost(request, buildPostPayload(overrides), access_token);
+}
+
+/** DELETE /posts/{id} as bob (best-effort cleanup). */
+export async function deleteBobPost(
+  request: APIRequestContext,
+  postId: string,
+): Promise<void> {
+  const { email, password } = requireBobCredentials();
+  const { access_token } = await login(request, email, password);
+  const response = await request.delete(`${apiUrl()}/posts/${postId}`, {
+    headers: { Authorization: `Bearer ${access_token}` },
+  });
 
   if (response.status() !== 204 && response.status() !== 200) {
     throw new Error(

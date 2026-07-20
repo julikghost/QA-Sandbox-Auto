@@ -35,6 +35,25 @@ export function requireAliceCredentials(): UserCredentials {
   return { email, password };
 }
 
+/** Username from .env: ALICE_USERNAME (UI author checks). */
+export function requireAliceUsername(): string {
+  const username = process.env.ALICE_USERNAME;
+  if (!username) {
+    throw new Error("ALICE_USERNAME missing in .env");
+  }
+  return username;
+}
+
+/** Credentials from .env: BOB_EMAIL / BOB_PASSWORD. */
+export function requireBobCredentials(): UserCredentials {
+  const email = process.env.BOB_EMAIL;
+  const password = process.env.BOB_PASSWORD;
+  if (!email || !password) {
+    throw new Error("BOB_EMAIL / BOB_PASSWORD missing in .env");
+  }
+  return { email, password };
+}
+
 /** Credentials from .env: FRANK_EMAIL / FRANK_PASSWORD (banned user UI login). */
 export function requireFrankCredentials(): UserCredentials {
   const email = process.env.FRANK_EMAIL;
