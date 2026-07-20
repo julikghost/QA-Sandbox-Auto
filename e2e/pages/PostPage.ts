@@ -7,7 +7,9 @@ import {
 import { BasePage } from "./BasePage";
 import { FeedPage } from "./FeedPage";
 import { Sidebar } from "../components/Sidebar";
+import { buildCommentPayload, buildReplyPayload } from "../testdata/comments";
 import { buildEditedPostPayload } from "../testdata/posts";
+import { requireAliceUsername } from "../utils/api/auth";
 import { updateAlicePost } from "../utils/api/posts";
 import { toTestId } from "../utils/tid";
 
@@ -105,7 +107,32 @@ export class PostPage extends BasePage {
     await this.feedPage.deletePost(postId);
   }
 
-  async replyToComment(commentId: string, text: string) {
+  async commentOnPost({
+    postId,
+    text = buildCommentPayload().content,
+    authorUsername = requireAliceUsername(),
+  }: {
+    postId: string;
+    text?: string;
+    authorUsername?: string;
+  }) {
+    await this.openPage(postId);
+    await this.pageLoaded();
+    await this.commentInput.fill(text);
+    await expect(this.commentSubmit).toBeEnabled();
+    await this.commentSubmit.click();
+    const comment = this.getCommentByText(text);
+    await expect(comment).toBeVisible();
+    await expect(comment).toContainText(`@${authorUsername}`);
+  }
+
+  async replyToComment({
+    commentId,
+    text = buildReplyPayload().content,
+  }: {
+    commentId: string;
+    text?: string;
+  }) {
     await this.getCommentReplyBtn(commentId).click();
     await this.commentInput.fill(text);
     await expect(this.commentSubmit).toBeEnabled();
