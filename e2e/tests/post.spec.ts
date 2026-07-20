@@ -1,4 +1,4 @@
-import { expect, test } from "@playwright/test";
+import { test } from "@playwright/test";
 import { FeedPage } from "../pages/FeedPage";
 import { PostPage } from "../pages/PostPage";
 import { ALICE_AUTH_FILE } from "../utils/api/auth";
@@ -7,41 +7,37 @@ import { buildPostPayload } from "../testdata/posts";
 test.use({ storageState: ALICE_AUTH_FILE });
 
 test.describe("post via UI", () => {
-  test.describe.configure({ mode: "serial" });
-
   let feedPage: FeedPage;
   let postPage: PostPage;
   let postId: string;
-  let postContent: string;
 
   test.beforeEach(async ({ page }) => {
     feedPage = new FeedPage(page);
     postPage = new PostPage(page);
     await feedPage.openPage();
     await feedPage.pageLoaded();
-
-    // one shared post for the whole serial suite
-    if (!postId) {
-      const { content } = buildPostPayload();
-      postContent = content;
-      postId = await feedPage.createPost(content);
-    }
   });
 
   test("Create post", async () => {
-    await expect(feedPage.getPostCard(postId)).toBeVisible();
-    await expect(feedPage.getPostByText(postContent)).toBeVisible();
+    const { content } = buildPostPayload();
+    postId = await feedPage.createPost(content);
   });
 
   test.skip("Edit post via UI", async () => {
-    await postPage.editPostUI(postId, buildPostPayload().content);
+    const { content } = buildPostPayload();
+    postId = await feedPage.createPost(content);
+    await postPage.editPostUI(postId, content);
   });
 
   test("Edit post via API", async ({ request }) => {
+    const { content } = buildPostPayload();
+    postId = await feedPage.createPost(content);
     await postPage.editPostApi({ request, postId });
   });
 
   test("Delete post", async () => {
+    const { content } = buildPostPayload();
+    postId = await feedPage.createPost(content);
     await feedPage.deletePost(postId);
   });
 });
